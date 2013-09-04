@@ -1,0 +1,58 @@
+Given a binary tree, return the level order traversal of its nodes' values. (ie, from left to right, level by level).
+
+For example:
+Given binary tree {3,9,20,#,#,15,7},
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+return its level order traversal as:
+
+[
+  [3],
+  [9,20],
+  [15,7]
+]
+confused what "{1,#,2,3}" means? > read more on how binary tree is serialized on OJ.
+
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+        vector<vector<int> > levelOrder(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        vector<vector<int> > lists;
+        queue<TreeNode *> current;
+        if (root!=NULL) current.push(root);
+        while(!current.empty()){
+            vector<int> list;//When we do this, we create a BRAND NEW list.
+            int size = current.size();
+            for (int i=0; i<size; ++i){
+                TreeNode * t = current.front();
+                list.push_back(t->val);
+                current.pop();
+                if (t->left!=NULL)
+                current.push(t->left);
+                if (t->right!=NULL)
+                current.push(t->right);
+            }
+            lists.push_back(list);
+        }
+        return lists;
+    }
+};
+
+REMARK:
+1.Hard question. IDEA: We go through level by level using a while loop. "current" stores and only stores all the node in one level. Then we store the value in "current" to the "list" by using "size = current.empty" to indicate how many nodes there are in this level and a for loop.
+2.Time: O(n).
+3. For vector,we use push_back(). For queue, we use push(),pop(),front(),empty(). 
