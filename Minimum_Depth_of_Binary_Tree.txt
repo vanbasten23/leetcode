@@ -1,0 +1,41 @@
+Given a binary tree, find its minimum depth.
+
+The minimum depth is the number of nodes along the shortest path from the root node down to the nearest leaf node.
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int minDepth(TreeNode *root) {
+        if (root == NULL) return 0;
+        if (root->left==NULL&&root->right==NULL) return 1;
+        else if (root->left==NULL) return minDepth(root->right)+1;
+        else if (root->right==NULL) return minDepth(root->left)+1;
+        else return min(minDepth(root->left),minDepth(root->right))+1;
+    }
+};
+
+
+
+REMARK:
+1. This problem is, pretty similar to the problem "Maximum Depth of Binary Tree" though, not as easy as that and it can be very subtle. Look at the appear-to-be-correct code:
+
+/*
+int min_depth(struct BiNode * node){
+    if(node == NULL)
+        return 0;
+        
+    int depth_l = min_depth(node -> left) + 1;
+    int depth_r = min_depth(node -> right) + 1;
+    return min(depth_l, depth_r);
+}
+*/
+
+What is wrong with the code above? The problem is the definition of the shortest path:"from the root down to the nearest leaf node". For example, if the tree is root=newNode(2), root->left=newNode(1), then the minimum depth should be 2 instead of 1. Therefore you need to consider the case in which one of the child of root is empty at each level.
+
