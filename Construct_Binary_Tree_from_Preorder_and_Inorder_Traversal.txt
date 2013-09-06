@@ -1,0 +1,51 @@
+Given preorder and inorder traversal of a tree, construct the binary tree.
+
+Note:
+You may assume that duplicates do not exist in the tree.
+
+
+
+
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*pl=preorder left=leftmost index in the preorder, pr=preorder right. il=inorder left=leftmost index in the inorder.*/
+    TreeNode *buildTreeHelper(vector<int> &preorder, int pl, int pr, vector<int> &inorder, int il, int ir){
+		if (pl>pr || il>ir) return NULL;
+		int rootvalue = preorder[pl];
+		TreeNode *node = new TreeNode(rootvalue);
+		node->val = rootvalue;
+		int leftsize,rightsize;//leftsize is the size of the left subtree of the root, rightsize is the size of the right subtree.
+		for (int i=il; i<=ir; ++i){
+			if (inorder[i]==rootvalue){
+				leftsize = i-il;
+				rightsize = ir-i;
+				break;
+			}
+		}
+		node->left =  buildTreeHelper(preorder, pl+1, pl+leftsize, inorder, il, il+leftsize-1);
+		node->right =  buildTreeHelper(preorder, pr-rightsize+1, pr, inorder, ir-rightsize+1, ir);
+		return node;
+	}
+ 
+    TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder) {
+        return buildTreeHelper(preorder, 0, preorder.size()-1, inorder, 0, inorder.size()-1);
+    }
+};
+
+
+REMARK:
+1. Tricky one. Idea: Recursion on the pl(==leftmost index in the preorder),pr,il(leftmost index in the inorder) and ir. Because we need to update pl,pr,il,ir, so we have to call another recursive funciton buildTreeHelper() in the given function buildTree(). Also, we need to get the size of the left subtree and right subtree in order to get the latest pl,pr,il and ir.
+2. In line15, the code pre-define how to use TreeNode, so in line 24, we should write 
+TreeNode *node = new TreeNode(rootvalue);
+instead of
+TreeNode *node = new TreeNode();
+
