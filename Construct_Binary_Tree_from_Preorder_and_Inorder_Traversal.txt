@@ -48,4 +48,5 @@ REMARK:
 TreeNode *node = new TreeNode(rootvalue);
 instead of
 TreeNode *node = new TreeNode();
+3. line 34,35 can be really error-prone and tricky. You should fully consider pl,pr,il,ir,leftsize and righsize along some math trick like +1,-1 etc.
 
