@@ -1,0 +1,211 @@
+Problem:Convert Binary Search Tree (BST) to Sorted Doubly-Linked List. (GREAT PRACTICE, REFER TO THE REMARK)
+
+
+/*The code below Convert a BST to a sorted circular doubly-linked list in-place.*/
+#include <iostream>
+using namespace std;
+
+struct BiNode{
+	struct BiNode *node1, *node2;
+	int data;
+};
+typedef BiNode BiNode;
+
+BiNode *newNode(int data){
+	BiNode *node = new BiNode();
+	node->data = data;
+	node->node1 = NULL;
+	node->node2 = NULL;
+    return node;
+}
+
+
+/*In the parameters: root denote the current node, prev denote the previous node in the linkedlist and head denote the head of the linkedlist*/
+void BST2DoublyList(BiNode *root, BiNode *&prev, BiNode *&head){
+	if (root==NULL) return;
+	BST2DoublyList(root->node1,prev,head);
+    
+	if (prev){
+		prev->node2 = root;
+	}
+	/*if the previous node in the linkedlist is NULL, it means the current node should be the head of the linkedlist.*/
+	else head = root;
+	/* as soon as the recursion ends, the head's left pointer points to the last node, and the last node's right pointer points to the head pointer.*/
+	BiNode *right = root->node2;//why do we need to define another variable BiNode *right? Answer is in the REMARK part.
+    head->node1 = root;
+	root->node2 = head;
+	/*update the previous node*/
+	prev = root;
+    
+	BST2DoublyList(right,prev,head);
+}
+
+BiNode *BST2DoublyList(BiNode *root){
+	BiNode *head=NULL;
+	BiNode *prev=NULL;
+    BST2DoublyList(root, prev, head);
+	return head;
+}
+
+int main(){
+	BiNode *root = newNode(4);
+	root->node1 = newNode(2);
+	root->node1->node1 = newNode(1);
+	root->node1->node2= newNode(3);
+	root->node2 = newNode(5);
+	BiNode *head = BST2DoublyList(root);
+	//output the circular linkedlist
+	int n = head->data;
+	do{
+        cout<<head->data<<" ";
+        head = head->node2;
+	}
+	while(head->data!=n);
+	cout<<endl;
+	return 0;
+}
+
+REMARK:
+1.IDEA: use a modified in-order traversal
+2.Answer the quesion in line34: we need to assign root->node2 to a new variable BiNode *right in advance because in 2 lines below(line 36), we modify root->node2 = head, which will change the recursive calls: that is if we do: (line34-40)
+
+    head->node1 = root;
+	root->node2 = head;
+	/*update the previous node*/
+	prev = root;
+    
+	BST2DoublyList(root->node2,prev,head);
+
+then at line 77, root->node2 is not the right child of the root anymore that is what we want. root->node2 has been changed to head(line 73).
+3. This problem illustrate the usage of & in line24 before the parameter prev and head. If we throw away the & in front of prev, we only get result 4 5 instead of the expected result 1 2 3 4 5. If you track the process in the code, you'll find out why we have to add &, otherwise(i.e without &) in the recursive stack when you jump from the current postion stack to the previous position, you'll lose the previously stored variable prev.
+4.For a complete explanation, refer to http://leetcode.com/2010/11/convert-binary-search-tree-bst-to.html
+5.Another great solution:
+
+
+
+#include <stdio.h>
+#include <stddef.h>
+#include <stdlib.h>
+
+/* The node type from which both the tree and list are built */
+struct node {
+    int data;
+    struct node* small;
+    struct node* large;
+};
+typedef struct node* Node;
+
+
+
+/*
+ helper function -- given two list nodes, join them
+ together so the second immediately follow the first.
+ Sets the .next of the first and the .previous of the second.
+*/
+static void join(Node a, Node b) {
+    a->large = b;
+    b->small = a;
+}
+
+
+/*
+ helper function -- given two circular doubly linked
+ lists, append them and return the new list.
+*/
+static Node append(Node a, Node b) {
+    Node aLast, bLast;
+    
+    if (a==NULL) return(b);
+    if (b==NULL) return(a);
+    
+    aLast = a->small;
+    bLast = b->small;
+    
+    join(aLast, b);
+    join(bLast, a);
+    
+    return(a);
+}
+
+
+/*
+ --Recursion--
+ Given an ordered binary tree, recursively change it into
+ a circular doubly linked list which is returned.
+*/
+static Node treeToList(Node root) {
+    Node aList, bList;
+    
+    if (root==NULL) return(NULL);
+
+    /* recursively solve subtrees -- leap of faith! */
+    aList = treeToList(root->small);
+    bList = treeToList(root->large);
+    
+    /* Make a length-1 list ouf of the root */
+    root->small = root;
+    root->large = root;
+
+    /* Append everything together in sorted order */
+    aList = append(aList, root);
+    aList = append(aList, bList);
+    
+    return(aList);
+
+}
+
+
+/* Create a new node */
+static Node newNode(int data) {
+    Node node = (Node) malloc(sizeof(struct node));
+    node->data = data;
+    node->small = NULL;
+    node->large = NULL;
+    return(node);
+}
+
+
+/* Add a new node into a tree */
+static void treeInsert(Node* rootRef, int data) {
+    Node root = *rootRef;
+    if (root == NULL) *rootRef = newNode(data);
+    else {
+        if (data <= root->data) treeInsert(&(root->small), data);
+        else treeInsert(&(root->large), data);
+    }
+}
+
+
+static void printList(Node head) {
+    Node current = head;
+    
+    while(current != NULL) {
+        printf("%d ", current->data);
+        current = current->large;
+        if (current == head) break;
+    }
+    printf("\n");
+}
+
+
+/* Demo that the code works */
+int main() {
+    Node root = NULL;
+    Node head;
+    
+    treeInsert(&root, 4);
+    treeInsert(&root, 2);
+    treeInsert(&root, 1);
+    treeInsert(&root, 3);
+    treeInsert(&root, 5);
+    
+    head = treeToList(root);
+    
+    printList(head);    /* prints: 1 2 3 4 5  */
+    
+    return(0);
+}
+ 
+REMARK:
+1. The  treeToList(Node root) function is the amazing part. Furthermore, another difficulty is to connect two circular linkedlist as in the function  append(Node a, Node b) and join() do, which are tricky and error-prone. 
+2. Can also serve as a new driver program for binary search tree(newNode(),treeInsert()).
