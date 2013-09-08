@@ -78,8 +78,9 @@ REMARK:
 
 then at line 77, root->node2 is not the right child of the root anymore that is what we want. root->node2 has been changed to head(line 73).
 3. This problem illustrate the usage of & in line24 before the parameter prev and head. If we throw away the & in front of prev, we only get result 4 5 instead of the expected result 1 2 3 4 5. If you track the process in the code, you'll find out why we have to add &, otherwise(i.e without &) in the recursive stack when you jump from the current postion stack to the previous position, you'll lose the previously stored variable prev.
-4.For a complete explanation, refer to http://leetcode.com/2010/11/convert-binary-search-tree-bst-to.html
-5.Another great solution:
+4.Time complexity: O(N). 
+5.For a complete explanation, refer to http://leetcode.com/2010/11/convert-binary-search-tree-bst-to.html
+6.Another great solution:
 
 
 
