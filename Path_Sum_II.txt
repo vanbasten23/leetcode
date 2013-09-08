@@ -1,0 +1,54 @@
+Given a binary tree and a sum, find all root-to-leaf paths where each path's sum equals the given sum.
+
+For example:
+Given the below binary tree and sum = 22,
+              5
+             / \
+            4   8
+           /   / \
+          11  13  4
+         /  \    / \
+        7    2  5   1
+return
+
+[
+   [5,4,11,2],
+   [5,8,4,5]
+]
+
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<vector<int> > lists;
+    
+    void pathSumHelper(TreeNode *root, int sum, vector<int> list){
+        if (root == NULL) return;
+        sum -= root->val;
+        list.push_back(root->val);
+        if (sum==0&&root->left==NULL&&root->right==NULL) lists.push_back(list);
+        pathSumHelper(root->left,sum,list);
+        pathSumHelper(root->right,sum,list);
+        
+    }
+    
+    vector<vector<int> > pathSum(TreeNode *root, int sum) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        lists.clear();
+        vector<int> list;
+        pathSumHelper(root,sum,list);
+        return lists;
+    }
+};
+
+REMARK:
+1. Carefully read the problem: root-to-leaf, so we cannot stop anywhere, we must stop exactly at the leaf. NOTE: we make a global variable  vector<vector<int> > lists and pay attention on how we construct the function void pathSumHelper(),in which we create vector list and pass it as parameter into the function pathSumHelper(). 
+2. Time O(N) since we have to loop through all the nodes.
