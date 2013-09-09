@@ -1,0 +1,50 @@
+Given a binary tree, find the maximum path sum.
+
+The path may start and end at any node in the tree.
+
+For example:
+Given the below binary tree,
+
+       1
+      / \
+     2   3
+Return 6.
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int maxPathSumHelper(TreeNode *root, int &maxSum){
+        if (root==NULL) return 0;
+        int leftSum = maxPathSumHelper(root->left,maxSum);
+        int rightSum = maxPathSumHelper(root->right,maxSum);
+        /*Next, we ge the max(maxSum,root->val,leftSum+root->val,root->val+rightSum,leftSum+root->val+rightSum)*/
+        int temp = max(root->val,max(leftSum+root->val,root->val+rightSum));
+        maxSum = max(maxSum,max(temp,leftSum+root->val+rightSum));
+        return temp;
+    }
+
+    int maxPathSum(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        int maxSum = root->val;
+        maxPathSumHelper(root,maxSum);
+        return maxSum;
+    }
+};
+
+REMARK:
+1.HARD PROBLEM,the value of the node could be "+"  or "-",  any node could be the start node or the end node. 
+2.IDEA: We loop through every node. On each node, we consider the path that passes through the node or end at the node, then we get the maximum. Thus, on each node, there are 4 cases:
+1)Node only;
+2)L-sub+Node;
+3)R-sub+Node;
+4)L-sub+Node+R-sub;
+Keep trace the four path and pick up the max one in the end.
+3.Reference: http://fisherlei.blogspot.com/2013/01/leetcode-binary-tree-maximum-path-sum.html
