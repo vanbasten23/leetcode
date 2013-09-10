@@ -1,0 +1,55 @@
+Given n, generate all structurally unique BST's (binary search trees) that store values 1...n.
+
+For example,
+Given n = 3, your program should return all 5 unique BST's shown below.
+
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+confused what "{1,#,2,3}" means? > read more on how binary tree is serialized on OJ.
+
+
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void generateTreesHelper(int start,int end, vector<TreeNode *> &res){
+        if (start>end){
+            res.push_back(NULL);
+            return;
+        }
+        for (int i=start; i<=end; ++i){
+            vector<TreeNode *> leftres,rightres;
+            generateTreesHelper(start,i-1,leftres);
+            generateTreesHelper(i+1,end,rightres);
+            for (int j=0; j<leftres.size(); ++j){
+                for (int k=0; k<rightres.size(); ++k){
+                    TreeNode *root = new TreeNode(i);
+                    root->left = leftres[j];
+                    root->right = rightres[k];
+                    res.push_back(root);
+                }
+            }
+        }   
+        
+    }
+
+    vector<TreeNode *> generateTrees(int n) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        vector<TreeNode *> res;
+        generateTreesHelper(1,n,res);
+        return res;
+    }
+};
+REMARK:
+1.Hard question. First of all, we need to figure out what the output is like. The output is a vector(or string) of type TreeNode*. Each element in the vector is a root corresponding to different structurally unique BST. Then, similar to the problem "Unique Binary Search Trees", i loop through the root of the tree. Next, we store the trees into leftres and rightres. Finally we assign the left child and right child of root using j and k.
