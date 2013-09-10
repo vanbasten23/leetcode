@@ -1,0 +1,61 @@
+Given a binary tree, check whether it is a mirror of itself (ie, symmetric around its center).
+
+For example, this binary tree is symmetric:
+
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+But the following is not:
+
+    1
+   / \
+  2   2
+   \   \
+   3    3
+Note:
+Bonus points if you could solve it both recursively and iteratively.
+
+confused what "{1,#,2,3}" means? > read more on how binary tree is serialized on OJ.
+
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool isSymmetricHelper(TreeNode *root1, TreeNode *root2){
+        if (root1==NULL&&root2==NULL) return true;
+        else if(root1==NULL||root2==NULL) return false;
+        return (root1->val==root2->val)&&isSymmetricHelper(root1->left,root2->right)&&isSymmetricHelper(root1->right,root2->left);
+    }
+
+    bool isSymmetric(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        if (root==NULL) return true;
+        return isSymmetricHelper(root->left,root->right);
+    }
+};
+
+REMARK:
+1.Hard one. IDEA: We need a helper function isSymmetricHelper() which takes 2 parameters: root->left and root->right. This helper function try to test if the subtree whose root is root1 is symmetric to the subtree whose root is root2. The process goes: check if root1->val==root2->val and check if subtree root1->left is symmetric to subtree root2->right and check if subtree roo1->right is symmetric to subtree root2->left.
+2. isSymmetricHelper() can be pretty error-prone, especially in line34,35,36.
+
+
+iterator: type
+stl::set,map(look up type)
+
+throw exception in destrctor
+
+Inline function
+
+static privavate protect public
+
+guru of week 
