@@ -1,0 +1,62 @@
+Given a binary tree, return the zigzag level order traversal of its nodes' values. (ie, from left to right, then right to left for the next level and alternate between).
+
+For example:
+Given binary tree {3,9,20,#,#,15,7},
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+return its zigzag level order traversal as:
+
+[
+  [3],
+  [20,9],
+  [15,7]
+]
+
+
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<vector<int> > zigzagLevelOrder(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        vector<vector<int> > lists;
+        queue<TreeNode *> current;
+        if (root==NULL) return lists;
+        bool right2left = false;
+        current.push(root);
+        while(!current.empty()){
+            int size = current.size();
+            vector<int> list;
+            for (int i=0; i<size; ++i){
+                TreeNode *node = current.front();
+                current.pop();
+                if (node->left) current.push(node->left);
+                if (node->right) current.push(node->right);
+                list.push_back(node->val);
+            }
+            if (right2left) reverse(list.begin(),list.end());
+            right2left = !right2left;
+            lists.push_back(list);
+        }
+    return lists;
+    }
+};
+
+REMARK:
+1. IDEA: similar to the problem "Binary_Tree_Level_Order_Traversal", difference is that we create a boolean variable "right2left" and if right2left is true(means at this level we need to output from right to left) then we use the built-in function reverse() to reverse the order. Others are the same to "Binary_Tree_Level_Order_Traversal" problem.
+2. Note:Used size=current.size()(line40,42) to denote which node is in the current level and which is in the next level so as to avoid create another queue, like what Gayle does in Gayle's book on page225 line11-24.Obviously, by using size=current.size(), it is much more convenient and better.
+3. Note: we can use reverse(), built-in function rather than write one ourselves.
+
+
