@@ -58,5 +58,13 @@ REMARK:
 1. IDEA: similar to the problem "Binary_Tree_Level_Order_Traversal", difference is that we create a boolean variable "right2left" and if right2left is true(means at this level we need to output from right to left) then we use the built-in function reverse() to reverse the order. Others are the same to "Binary_Tree_Level_Order_Traversal" problem.
 2. Note:Used size=current.size()(line40,42) to denote which node is in the current level and which is in the next level so as to avoid create another queue, like what Gayle does in Gayle's book on page225 line11-24.Obviously, by using size=current.size(), it is much more convenient and better.
 3. Note: we can use reverse(), built-in function rather than write one ourselves.
+4. If root==NULL, how do return a null vector? Can we do it like this:
+
+vector<vector<int> > zigzagLevelOrder(TreeNode *root) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        if (root==NULL) return NULL;
+
+No. We cannot do that otherwise we'll get error. However, the solution provides a way to do it.
 
 
