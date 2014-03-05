@@ -1,0 +1,48 @@
+/*
+Swap Nodes in Pairs.
+Given a linked list, swap every two adjacent nodes and return its head.
+
+For example,
+Given 1->2->3->4, you should return the list as 2->1->4->3.
+
+Your algorithm should use only constant space. You may not modify the values in the list, only nodes itself can be changed.
+*/
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *swapPairs(ListNode *head) {
+        if (head==NULL||head->next==NULL) return head;
+	ListNode *dummyHead = new ListNode(INT_MIN);
+	dummyHead->next=head;
+	ListNode *p=dummyHead, *q=dummyHead;
+	while(p->next!=NULL)
+	{
+	  int counter=2;
+	  //first move pointer q to the place
+	  while((counter--)>0)
+	  {
+	    q=q->next;
+	    if (q==NULL) return dummyHead->next;
+	  }
+	  p->next->next=q->next;
+	  q->next=p->next;
+	  p->next=q;
+	  counter=2;
+	  //move pointer q to next place
+	  while((counter--)>1) q=q->next;
+	  p=q;
+	}
+	return dummyHead->next;
+    }
+};
+
+REMARK:
+1.Special version of the problem "reverse nodes in k-Group."refer to that problem.
