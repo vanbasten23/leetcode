@@ -1,0 +1,18 @@
+/*Problem: Given a singly linked list, find if there exist a loop.
+*/
+
+bool hasLoop(Node *head) {
+  Node *slow=head, *fast=head;
+  while((fast!=NULL)&&(fast->next!=NULL))
+  {
+    slow=slow->next;
+    fast=fast->next->next;
+    if (slow==fast) return true;
+  }
+  return false;
+}
+
+
+1.IDEA:It uses two pointers (one slow pointer and one fast pointer). The slow pointer advances one node at a time, while the fast pointer traverses twice as fast. If the list has loop in it, eventually the fast and slow pointer will meet at the same node. On the other hand, if the loop has no loop, the fast pointer will reach the end of list before the slow pointer does.
+2.The solution runs in O(N) time and uses O(1) space.
+3. This elegant algorithm is known as Floyd’s cycle finding algorithm, also called the Tortoise and hare algorithm.
