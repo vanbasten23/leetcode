@@ -1,0 +1,69 @@
+Max Points on a Line 
+Given n points on a 2D plane, find the maximum number of points that lie on the same straight line.
+
+/**
+ * Definition for a point.
+ * struct Point {
+ *     int x;
+ *     int y;
+ *     Point() : x(0), y(0) {}
+ *     Point(int a, int b) : x(a), y(b) {}
+ * };
+ */
+class Solution {
+public:
+    int maxPoints(vector<Point> &points) {
+    //first, let's deal with the corner cases
+	if (points.size()<=2) return points.size();
+	int maxNum =2;//record the maximum number of points
+    vector<double> k;//vector to store the slops for one point with all the other points. notice the vector should be in type double instead of int.
+	for (int i=0; i<points.size(); ++i)
+	{
+        //for each points[i],compute the slopes and store them into vector k, and then sort them
+        k.clear();
+        int numDup=1;//number of the duplicates with currrent point
+        for (int j=0; j<points.size(); ++j)
+        {
+            if (i!=j)//for every other points
+            {
+                if (points[i].x==points[j].x)//// if the slope is a vertical line
+                {
+                    if (points[i].y==points[j].y)
+                    {
+                        numDup++;
+                    }
+                    else
+                    {
+                        k.push_back(INT_MAX);
+                    }
+                }
+                else
+                {
+                    k.push_back(10000*(points[i].y-points[j].y)/(points[i].x-points[j].x));
+                }
+            }
+        }
+        sort(k.begin(),k.end());//sort the slopes
+        //next count the duplicated slope in the vector k.
+        int temp1=1;//number of points in the same line of the point i
+        if (k.size()==0) temp1=0;
+        for (int jj=1; jj<k.size(); ++jj)
+        {
+            if (k[jj-1]==k[jj]) temp1++;
+            else
+            {
+                if (temp1+numDup>maxNum) maxNum=temp1+numDup;
+                temp1=1;
+            }
+        }
+        if (temp1+numDup>maxNum) maxNum=temp1+numDup;
+	}
+	return maxNum;
+}
+};
+
+REMARK:
+1.Hard one.IDEA:we can have a loop from the 1st point to the last point. Within this loop, we compute the slopes from this point to every other point. Then find the max number of points, which has the same slope.
+2.One of the biggest trap is the degeneracy: In vector k, two slopes may be vary only a little bit so the computer regard them as the same.That's why we need to multiply each slope by 10000.
+3.Notice: the vector k should be in the type of double instead of int.We need to consider duplicated points.
+4.The complexity of this problem is :   O(n*nlgn). 
