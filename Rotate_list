@@ -1,0 +1,44 @@
+/*Problem: Rotate List
+Given a list, rotate the list to the right by k places, where k is non-negative.
+
+For example:
+Given 1->2->3->4->5->NULL and k = 2,
+return 4->5->1->2->3->NULL.
+*/
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+ListNode *rotateRight(ListNode *head, int k) {
+    if (head==NULL||k==0) return head;
+    ListNode *newHead=head, *p1=head;
+    while (k>0){
+        newHead=newHead->next;
+        if (newHead==NULL) newHead=head;
+        k--;
+    }
+    //we next move newHead to the beginning of the new list and p1 to the tail of the new list.
+    while(newHead->next){
+        newHead=newHead->next;
+        p1=p1->next;
+    }
+    //now newHead points to the beginning of the new list and p1 points to the tail of the new list.
+    newHead->next=head;
+    head=p1->next;
+    p1->next=NULL;
+    return head;
+}
+};
+
+REMARK:
+1. This seems to be an easy one. But it can be tricky.
+I first did not get the meaning of the problem.
+IDEA: create 2 pointers that track the tail and the beginning of the new list repectively. The method is hard to describe but can be easily seen via code.
+2. Efficiency: max(k,n) where n is the length of the list.
