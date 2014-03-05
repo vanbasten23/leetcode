@@ -1,0 +1,35 @@
+/*
+Convert Sorted Array to Binary Search Tree 
+Given an array where elements are sorted in ascending order, convert it to a height balanced BST.
+*/
+
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode *helper(vector<int> &num,int start, int end)
+    {
+      if (start>end) return NULL;
+      int mid=(start+end)/2;
+      TreeNode *root = new TreeNode(num[mid]);
+      root->left=helper(num,start,mid-1);
+      root->right=helper(num,mid+1,end);
+      return root;
+    }
+	
+    TreeNode *sortedArrayToBST(vector<int> &num) {
+      if (num.size()==0) return NULL;
+      return helper(num,0,num.size()-1);   
+    }
+};
+
+REMARK:
+1.Hard. Haven't done the binary tree problem for a while. Don't know how to do it at first. Turns out we have to create a new helper function 
+IDEA: Because we eventually should get a height balanced banary search tree,so each time we make the middle element of array to be the root,the first half before the middle element of the array to be the left branch of the root, the second half to be the right half of the root. We do it recursively. Reason we need the helper function: because in every recursion, we need the middle element of the array to be the root, and the middle element index =(start+end)/2. Thus we need a helper function.
