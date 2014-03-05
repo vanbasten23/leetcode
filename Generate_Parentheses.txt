@@ -1,0 +1,80 @@
+Problem:Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+For example, given n = 3, a solution set is:
+
+"((()))", "(()())", "(())()", "()(())", "()()()"
+
+Solution:
+
+class Solution {
+public:
+    void genParHelper(vector<string> &result, string s, int left, int right){
+        if (left<0||right<0) return;
+        if (left==0&&right==0){
+        result.push_back(s);
+        return;
+        }
+        if (left>0){
+        left--;
+        genParHelper(result,s+"(",left,right);
+        left++;
+        }
+        if (left<right){
+        right--;
+        genParHelper(result,s+")",left,right);
+        right++;
+        }
+    }
+
+    vector<string> generateParenthesis(int n) {
+        // Note: The Solution object is instantiated only once and is reused by each test case.
+        vector<string> result;
+        result.clear();
+        string s;
+        genParHelper(result,s,n,n);
+        return result;
+    }
+};
+
+REMARK:
+1.IDEA:Idea is easy, we do in 2 cases:case1. When the number of left parentheses that we have left (left variable in the code) is greater or equal to the number of right parentheses that we left(right variable in the code), we can only insert  '(' as long as we have '(' left(like left>0 in the code). Eg, if we have left (()) or ((), we can only insert (;case2. only when left<right,# of '(' we left is strictly less than # of ')'that we left, we can insert ')'.
+2.Tricky bug: here is my original code with bug in it, can you find that?
+void genParHelper(vector<string> &result, string s, int left, int right){
+        if (left<0||right<0) return;
+        if (left==0&&right==0){
+        result.push_back(s);
+        return;
+        }
+        if (left>0){
+        left--;
+        genParHelper(result,s+"(",left,right);
+        left++;
+        }
+        if (left<right){
+        right--;
+        genParHelper(result,s+")",left,right);
+        right++;
+        }
+    }
+
+Bug is, in this problem, whenever you come back from recursion, you need to restore the variable s,left, and right.
+Here is a neat solution by jinil:
+class Solution {
+public:
+    vector<string> ans;
+    void generate(string cur, int left, int right, int n){
+        if(left==n && right==n){
+            ans.push_back(cur);
+            return;
+        }        
+        if(left<n)  generate(cur+'(', left+1, right, n);
+        if(left>right)  generate(cur+')', left, right+1, n);
+    }
+
+    vector<string> generateParenthesis(int n) {
+        ans.clear();
+        string cur;
+        generate(cur, 0, 0, n);        
+        return ans;
+    }
+};
