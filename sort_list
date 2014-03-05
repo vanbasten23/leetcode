@@ -1,0 +1,87 @@
+Sort a linked list in O(n log n) time using constant space complexity.
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    //function mergeLists is used to merge two linked lists and return the head pointer.
+    ListNode *mergeLists(ListNode *h1, ListNode *h2)
+{
+    ListNode *head;
+    if (!h1) return h2;
+    if (!h2) return h1;
+    if (h1->val<=h2->val)
+    {
+        head = h1;
+        h1=h1->next;
+    }
+    else
+    {
+        head = h2;
+        h2=h2->next;
+    }
+    ListNode *p = head;
+    while (h1&&h2)
+    {
+        if (h1->val<=h2->val)
+        {
+            p->next=h1;
+            p=h1;
+            h1=h1->next;
+        }
+        else
+        {
+            p->next=h2;
+            p=h2;
+            h2=h2->next;
+        }
+    }
+    if (!h1) p->next=h2;
+    if (!h2) p->next=h1;
+    return head;
+}
+
+ListNode *sortList(ListNode *head) {
+    if (!head ||! (head->next)) return head;
+    ListNode *slowptr=head, *fastptr=head->next;
+    while (fastptr && (fastptr->next))
+    {
+        slowptr=slowptr->next;
+        fastptr=fastptr->next->next;
+    }
+    ListNode *head1=slowptr->next;//the second pointer that points to the second linked list.
+    slowptr->next=NULL;
+    head= sortList(head);
+    head1 = sortList(head1);
+    return mergeLists(head,head1);
+}
+
+};
+
+remark:
+1. IDEA: Because we need to sort in O(n log n) time using constant space complexity, so we use divide&conquer. 
+2. A better version of mergeLists(ListNode *h1, ListNode *h2) using recursion.
+
+ListNode *mergeLists(ListNode *h1, ListNode *h2)
+{
+    ListNode *head;
+    if (!h1) return h2;
+    if (!h2) return h1;
+    if (h1->val<=h2->val)
+    {
+        head = h1;
+        head->next=mergeLists(head->next,h2);
+    }
+    else
+    {
+        head = h2;
+        head->next=mergeLists(h1,head->next);
+    }
+    return head;
+}
