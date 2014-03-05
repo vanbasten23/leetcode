@@ -1,0 +1,43 @@
+Insertion Sort List 
+Problem: Sort a linked list using insertion sort.
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+   //this function below is used to determine the place where we insert the node pointed by head.
+   ListNode *findInsertPlace(ListNode *DummyHead,ListNode *head)
+{
+    while(DummyHead->next!=NULL && head->val>=DummyHead->next->val)
+        DummyHead=DummyHead->next;
+    return DummyHead;
+}
+
+ListNode *insertionSortList(ListNode *head) {
+    if (head == NULL || head->next == NULL) return head; 
+    ListNode *DummyHead = new ListNode(INT_MIN);
+	while(head!=NULL){
+        ListNode *originalNext=head->next;
+        ListNode *insert = findInsertPlace(DummyHead,head);
+        
+        head->next=insert->next;
+        insert->next=head;
+        
+        head=originalNext;
+	}
+	return DummyHead->next;
+}
+};
+
+REMARK:
+1. Spent many hours. Hard problem for me.This solution is tricky.
+IDEA:Initially pointer head points to the original list and pointer DummyHead points to the new sorted list.Then head points to the node that we want to insert it into the sorted list and is used to walk through the original list. originalNext record the next node of current node(which is head). To illustrate for example:
+(loop1) DummyHead->NULL,head->4->2->1->3->NULL
+(loop2)DummyHead->4->NULL, head->2->1->3->NULL
+(loop3)DummyHead->2->4->NULL, head->1->3->NULL ...
+2. Since we used 2 while loop, time complexity is O(n^2)  (=1+2+...+n)
