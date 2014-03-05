@@ -1,0 +1,79 @@
+/*
+Reverse linked list II
+Reverse a linked list from position m to n. Do it in-place and in one-pass.
+
+For example:
+Given 1->2->3->4->5->NULL, m = 2 and n = 4,
+
+return 1->4->3->2->5->NULL.
+
+Note:
+Given m, n satisfy the following condition:
+1 ≤ m ≤ n ≤ length of list.
+*/
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+ListNode *reverseBetween(ListNode *head, int m, int n) {
+    if (head==NULL) return NULL;
+    ListNode *dummyHead=head;
+    //first move the dummyHead to the position m
+    int length=n-m+1;//length of the sublist
+    while(m-1>0){dummyHead=dummyHead->next;m--;}
+    int k=1,l=length;
+    while(k<l)
+    {
+        ListNode *p=dummyHead, *q=dummyHead;
+        int m1=k,m2=l;
+        while(m1-1>0){p=p->next;m1--;}
+        while(m2-1>0){q=q->next;m2--;}
+        int temp=p->val;
+        p->val=q->val;
+        q->val=temp;
+        k++;
+        l--;
+    }
+    return head;
+}
+};
+
+REMARK:
+1. Hard problem. First difficulty: do not try to swap nodes, just swap the value. Second, how to swap the value.IDEA:Every time, starting from the position m, locate the pair of the nodes by using 2 pointers p and q.Stop condition:use 2 integers to represent the indices of the pair of nodes, when the first index is greater or equal to the second index, we stop.
+2.Time complexity: times of shifting pointer p:1+2+...+(n-m)/2
+times of shifting pointer q:n+(n-1)+...+(n-m)/2
+so in total: O(n^2)
+3
+Another version:
+class Solution {
+public:
+    ListNode *reverseBetween(ListNode *head, int m, int n) {
+      if (head==NULL) return NULL;
+      for (int i=0; i<n-m; ++i)
+      {
+        ListNode *p=head, *q=head;//used to point to a pair of nodes
+	int k=m+i, l=n-i;
+	if (k>=l) return head;
+	while(k-1>0){
+	  p=p->next;
+	  k--;
+	}
+	while(l-1>0)
+	{
+ 	  q=q->next;
+	  l--;
+	}
+	int temp=p->val;
+	p->val=q->val;
+	q->val=temp; 
+      }
+      return head;
+    }
+};
