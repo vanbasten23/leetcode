@@ -1,0 +1,116 @@
+LEETCODE:
+Evaluate Reverse Polish Notation
+Evaluate the value of an arithmetic expression in Reverse Polish Notation.
+
+Valid operators are +, -, *, /. Each operand may be an integer or another expression.
+
+Some examples:
+  ["2", "1", "+", "3", "*"] -> ((2 + 1) * 3) -> 9
+  ["4", "13", "5", "/", "+"] -> (4 + (13 / 5)) -> 6
+
+My solution:
+
+#include <iostream>
+#include <stack>
+#include <vector>
+using namespace std;
+
+int evalRPN(vector<string> &tokens) {
+    if (tokens.size()==0){
+        return INT_MIN;
+    }
+    else if (tokens.size()==1 && (tokens[0]=="+"||tokens[0]=="-"||tokens[0]=="*"||tokens[0]=="/")){
+        return INT_MIN;
+    }
+    else if (tokens.size()==2 && (tokens[1]=="+"||tokens[1]=="-"||tokens[1]=="*"||tokens[1]=="/")){
+        return INT_MIN;
+    }
+    else{
+        stack<int> mystack;
+        int i;
+        for (i=0; i<tokens.size(); ++i){
+            if (tokens[i]!="+" && tokens[i]!="-" && tokens[i]!="*" && tokens[i]!="/")
+                mystack.push(atoi(tokens[i].c_str()));
+            else{
+                int temp1 = mystack.top();
+                mystack.pop();
+                int temp2 = mystack.top();
+                mystack.pop();
+                if (tokens[i]=="+"){
+                    mystack.push(temp2+temp1);
+                }
+                else if (tokens[i]=="-"){
+                    mystack.push(temp2-temp1);
+                }
+                else if (tokens[i]=="*"){
+                    mystack.push(temp2*temp1);
+                }
+                else{
+                    if (temp1!=0)
+                        mystack.push(temp2/temp1);
+                    else{
+                        cout<<"denomerator is 0"<<endl;
+                        return INT_MIN;
+                    }
+                }
+            }
+        }
+        return mystack.top();
+    }
+}
+int main(){
+    const char* args[] = {"18"};
+    std::vector<std::string> v(args,args+1);
+    cout<<evalRPN(v)<<endl;
+}
+
+REMARK:
+1.IDEA: Use stack, if the next token is operand, we push it to the stack. Else if it's an operator, we pop the stack out twice and compute, then push the result to the stack. And so on. Use a for loop.
+2.Note we are given vector<string> and we define stack to be int, so in this line, we use
+                mystack.push(atoi(tokens[i].c_str()));
+tokens[i].c_str() returns the pointer to the tokens[i]
+atoi parses the C-string str interpreting its content as an integral number, which is returned as a value of type int.
+
+Only in this way can we restore the integer in the vector<string> to the stack<int>.
+3.There are several corner cases, we can do as the code above. We can also do a simlified way as follows.
+
+class Solution {
+public:
+    int evalRPN(vector<string> &tokens) {
+        if (tokens.size()==0){
+            return INT_MIN;
+        }
+        stack<int> mystack;
+        int i;
+        for (i=0; i<tokens.size(); ++i){
+            if (tokens[i]!="+" && tokens[i]!="-" && tokens[i]!="*" && tokens[i]!="/")//if it's numerical
+                mystack.push(atoi(tokens[i].c_str()));
+            else{//if it's operator
+                if (mystack.size()<2) return -1;
+                int temp1 = mystack.top();
+                mystack.pop();
+                int temp2 = mystack.top();
+                mystack.pop();
+                if (tokens[i]=="+"){
+                    mystack.push(temp2+temp1);
+                }
+                else if (tokens[i]=="-"){
+                    mystack.push(temp2-temp1);
+                }
+                else if (tokens[i]=="*"){
+                    mystack.push(temp2*temp1);
+                }
+                else{
+                    if (temp1!=0)
+                        mystack.push(temp2/temp1);
+                    else{
+                        cout<<"denomerator is 0"<<endl;
+                        return INT_MIN;
+                    }
+                }
+            }
+        }
+        return mystack.top();
+    }
+};
+
