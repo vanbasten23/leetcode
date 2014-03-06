@@ -1,0 +1,39 @@
+/*
+Valid Parentheses
+Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+
+The brackets must close in the correct order, "()" and "()[]{}" are all valid but "(]" and "([)]" are not.
+*/
+
+class Solution {
+public:
+    bool isValid(string s) {
+      stack<char> mystack;
+      if (s.size()==0) return true;
+      for (int i=0; i<s.size(); ++i)
+      {
+        
+	if(!mystack.empty()&&s[i]==')'&&mystack.top()=='(')
+	{
+	  mystack.pop();
+	}
+	else if(!mystack.empty()&&s[i]==']'&&mystack.top()=='[')
+	{
+	  mystack.pop();
+	}
+	else if(!mystack.empty()&&s[i]=='}'&&mystack.top()=='{')
+	{
+	  mystack.pop();
+	}
+	else mystack.push(s[i]);
+      }
+      return mystack.empty(); 
+    }
+};
+
+REMARK:
+1.IDEA:
+Use a stack.
+If stack is not empty && top of the stack matches the next char in the string, we pop the top element in the stack
+Else: push the next char into the stack.
+Finally, after loop through all the char in the string, return true if the stack is empty or return false if the stack is not empty.
