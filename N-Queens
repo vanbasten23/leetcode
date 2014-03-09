@@ -1,0 +1,89 @@
+/*The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
+
+Given an integer n, return all distinct solutions to the n-queens puzzle.
+
+Each solution contains a distinct board configuration of the n-queens' placement, where 'Q' and '.' both indicate a queen and an empty space respectively.
+
+For example,
+There exist two distinct solutions to the 4-queens puzzle:
+
+[
+ [".Q..",  // Solution 1
+  "...Q",
+  "Q...",
+  "..Q."],
+
+ ["..Q.",  // Solution 2
+  "Q...",
+  "...Q",
+  ".Q.."]
+]
+*/
+
+
+class Solution {
+public:
+    vector<vector<string> > allSolution;
+    
+    //First transfer the current solution in the form of layout(a one dimensional vector) into the required form like ["..Q.","","",""]add the current solution to allSolution(of type vector<vector<string> >)
+    void addSolution(vector<int> layout,int n)
+    {
+      vector<string> solution;
+      for (int i=0; i<n; ++i)
+      {
+        string str(n,'.');
+	str[layout[i]]='Q';
+	solution.push_back(str);
+      }
+      allSolution.push_back(solution);
+    }
+
+     //check if the layout at line recur is valid.
+     bool isValid(vector<int> layout, int recur)
+     {
+       for (int i=0;i<recur;++i)
+       {
+         if (layout[i]==layout[recur]||(layout[i]-layout[recur]==i-recur)||(layout[i]-layout[recur]==recur-i))
+	   return false;
+       }
+       return true;
+     }    
+
+    //nqueensHelper(vector<int> layout,int recur, int n) is used to recursively compute the solution to the NQueens problem, in which recur can be considered as the line number, from 0 to n-1.
+    void nqueensHelper(vector<int> layout,int recur, int n)
+    {
+      //recur is 0 initially. When recur==n, we call function addSolution() to add the current solution to allSolution(of the type vector<vector<string> >)
+      if (recur==n)
+      {
+        addSolution(layout,n);
+      }
+      else
+      {
+        for (int i=0; i<n; ++i)
+	{
+	  //we try to put the queen at position (recur,i) on the board.
+	  layout[recur]=i;
+	  //make sure that we put the queen at position (recur,i) on the board is valid. If so, we move to the line recur+1
+	  if (isValid(layout,recur)) nqueensHelper(layout,recur+1,n);
+	}
+      }
+    }	
+
+    vector<vector<string> > solveNQueens(int n) {
+      allSolution.clear();
+      vector<int> layout(n,-1);
+      nqueensHelper(layout,0,n);
+      return allSolution;
+    }
+};
+
+
+REMARK:
+1. Super hard for idea and implementation.so hard. The code is long, but not that long if we get rid of explanation. Also, the logic is pretty clear.
+Use the recursive method to loop through each line of the board from 0 to n-1 by using variable recur. layout is an one dimensional vector that indicate how to put the N queens: layout[i]=j refers that the ith row and jth column is placed a queen. Valid the layout:  not in the same column, which is layout[i]!=layout[recur], not in the same diagonal direction: abs(layout[i]-layout[recur]) != recur-i
+2.Difficulty:
+(a)How to represent the board? Answer: use a one-dimensional vector layout:layout[i]=j refers that the ith row and jth column is placed a queen
+(b)Use a global variable allSolution to avoid pass the variable around.
+(c)How to translate the solution in the form layout to the desired form [[..Q.],[],...]? Answer:refer to the code.
+3.Note:
+std::vector<int> second (4,100); // four ints with value 100
