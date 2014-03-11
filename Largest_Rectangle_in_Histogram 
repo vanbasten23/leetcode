@@ -1,0 +1,112 @@
+/*
+Largest Rectangle in Histogram (graphs in the problem. refer to the website)
+Given n non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram.
+
+
+Above is a histogram where width of each bar is 1, given height = [2,1,5,6,2,3].
+
+
+The largest rectangle is shown in the shaded area, which has area = 10 unit.
+
+For example,
+Given height = [2,1,5,6,2,3],
+return 10.
+*/
+
+//solution1
+class Solution {
+public:
+int largestRectangleArea(vector<int> &height) {
+    vector<int> leftBound(height.size(),-1);
+    vector<int> rightBound(height.size(),-1);
+    //first determine the leftBound
+    int i=0,maxArea=0;
+    while(i<height.size())
+    {
+      int j=i;//j is used to moving to left and track the index of left bound. 
+      while(j>0 && height[i]<=height[j-1]) j=leftBound[j-1];//we use the previous result here
+      leftBound[i++]=j;
+    }
+    //secondly, we determine the rightBound
+    i=height.size()-1;
+    while(i>=0)
+    {
+    int j=i;
+    while(j<height.size()-1&&height[i]<=height[j+1]) j=rightBound[j+1];
+    rightBound[i--]=j;
+    }
+    //Now since we get the width(=rightBound-leftBound+1), we multiply it by the corresponding height
+    for (int i=0; i<height.size(); ++i)
+      maxArea=max(maxArea,height[i]*(rightBound[i]-leftBound[i]+1));
+    return maxArea;
+}
+};
+
+
+//solution2
+class Solution {
+public:
+int largestRectangleArea(vector<int> &height) {
+    int maxarea=0;
+    //mystack stores the index of the element in the vector height, in which the elements are in increasing order.
+    stack<int> mystack;
+    //attach a dummy tail
+    height.push_back(0);
+    int i=0;
+    while(i<height.size())
+    {
+        if (mystack.empty() || height[i]>=height[mystack.top()]) mystack.push(i++);
+        else
+        {
+            int index=mystack.top();
+            mystack.pop();
+            maxarea=max(maxarea,mystack.empty()?(height[index]*i):(height[index]*(i-mystack.top()-1)));
+        }
+    }
+    return maxarea;
+}
+};
+
+
+
+REMARK:
+1.I wrote the O(n^2) easily. But it's too slow. We can increase the efficiency to O(n) as solution2 does. But solution2 is sooo tricky and error prone. Still not quite sure how solution2 works. Solution1 is the best, clear in logic and less error prone.
+IDEA(solution1 O(n)):Easy. For a given height height[i], we need to find the largest valid width. So the rectangle area=height*width. Then we loop through i from 0 to n to get the largest area. In order to get the largest width for a given height height[i], we loop through from left to right to get the leftBound[i] for height[i] and loop through from right to left to get the rightBound[i]. For example(height=[2,1,5,6,2,3]),for height[1]=1,we extend the upper edge to left and right, then find out the left bound is 0 and right bound is 5.
+
+IDEA(solution2 O(n)):Use a stack to store the index of height in which the heights are in increasing order. refer to http://www.cnblogs.com/lichen782/p/leetcode_Largest_Rectangle_in_Histogram.html
+
+Detail: in line 63: maxarea=max(maxarea,mystack.empty()?(height[index]*i):(height[index]*(i-mystack.top()-1)));
+
+we cannot write:maxarea=max(maxarea,mystack.empty()?(height[index]*i):(height[index]*(i-index)));
+
+because index may not be mystack.top()+1(refer to http://www.cnblogs.com/lichen782/p/leetcode_Largest_Rectangle_in_Histogram.html)
+
+
+//First version, simply but time costly. O(n^2).
+class Solution {
+public:
+    int largestRectangleArea(vector<int> &height) {
+      if (height.size()==0) return 0;
+      int globalMax=0;
+      for (int i=0; i<height.size(); ++i)
+      {
+        int localMax=height[i];
+        int minHeight=height[i];
+        int width=1;
+        for (int j=i+1; j<height.size(); ++j)
+        {
+            width++;
+            if (height[j]<minHeight) minHeight=height[j];
+            if ((width*minHeight)>localMax) localMax=(width*minHeight);
+        }
+        if (localMax>globalMax) globalMax=localMax;
+     }
+     return globalMax;
+}
+};
+
+
+
+
+
+
