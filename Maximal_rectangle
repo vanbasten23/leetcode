@@ -1,0 +1,59 @@
+/*
+Maximal Rectangle 
+Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle containing all ones and return its area.
+*/
+
+class Solution {
+public:
+	
+	int largestRectangleArea(vector<int> &height) {
+    vector<int> leftBound(height.size(),-1);
+    vector<int> rightBound(height.size(),-1);
+    //first determine the leftBound
+    int i=0,maxArea=0;
+    while(i<height.size())
+    {
+      int j=i;//j is used to moving to left and track the index of left bound. 
+      while(j>0 && height[i]<=height[j-1]) j=leftBound[j-1];//we use the previous result here
+      leftBound[i++]=j;
+    }
+    //secondly, we determine the rightBound
+    i=height.size()-1;
+    while(i>=0)
+    {
+    int j=i;
+    while(j<height.size()-1&&height[i]<=height[j+1]) j=rightBound[j+1];
+    rightBound[i--]=j;
+    }
+    //Now since we get the width(=rightBound-leftBound+1), we multiply it by the corresponding height
+    for (int i=0; i<height.size(); ++i)
+      maxArea=max(maxArea,height[i]*(rightBound[i]-leftBound[i]+1));
+    return maxArea;
+}
+	
+
+    int maximalRectangle(vector<vector<char> > &matrix) {
+    	if (matrix.size()==0) return 0;
+    	int maxArea=0, area=0;
+    	//m and n are the size of the matrix
+    	int nrow=matrix.size(), ncol=matrix[0].size();
+    	//vector histo denote the histogram of the matrix from row 0 to row nrow-1. 
+    	vector<int> histo(ncol,0);
+    	for (int i=0; i<nrow; ++i)
+    	{
+    	  for (int j=0; j<ncol; ++j)
+    	  {
+    	    if (matrix[i][j]=='1') histo[j]++;
+    	    if (matrix[i][j]=='0') histo[j]=0;
+    	  }
+    	  area=largestRectangleArea(histo);
+    	  if (area>maxArea) maxArea=area;
+    	}
+    	return maxArea;
+    }
+};
+
+REMARK:
+1. IDEA:The idea of this problem is based on the problem Largest Rectangle in Histogram. We transform this problem to the previous problem Largest Rectangle in Histogram. We use a one-dimensional vector to store the height of the histogram.
+2. Time: O(n^2)
+
