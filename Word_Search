@@ -1,0 +1,60 @@
+/*
+Word Search
+Given a 2D board and a word, find if the word exists in the grid.
+
+The word can be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or vertically neighboring. The same letter cell may not be used more than once.
+
+For example,
+Given board =
+
+[
+  ["ABCE"],
+  ["SFCS"],
+  ["ADEE"]
+]
+word = "ABCCED", -> returns true,
+word = "SEE", -> returns true,
+word = "ABCB", -> returns false.
+*/
+class Solution {
+public:
+// helper(vector<vector<char> > &board, string word, int index, int i, int j) returns true if there exist a subword[index,...] of word in the board starting from the position[i][j]. index is the current position in the word, i and j is the current position in the board.
+	bool helper(vector<vector<char> > &board, string word, int index, int i, int j)
+    {
+        if (index==word.size()) return true;
+        else if (i<0||i>board.size()-1||j<0||j>board[0].size()-1) return false;
+        else if (board[i][j]!=word[index]) return false;
+        else//this is the case where board[i][j]==word[index]
+        {
+            char ch=board[i][j];
+            board[i][j]='.';
+            
+            if (helper(board,word,index+1,i+1,j)) return true;
+            if (helper(board,word,index+1,i-1,j)) return true;
+            if (helper(board,word,index+1,i,j+1)) return true;
+            if (helper(board,word,index+1,i,j-1)) return true;
+            
+            board[i][j]=ch;
+            return false;
+        }
+    }
+
+    bool exist(vector<vector<char> > &board, string word) {
+      if (word=="") return true;
+      if (board.size()==0) return false;
+      int m=board.size(), n=board[0].size(), wordLength=word.size();
+      for (int i=0; i<m; ++i)
+      {
+        for (int j=0; j<n; ++j)
+        {
+          if (helper(board,word,0,i,j)) return true;
+        }
+      }
+      return false;
+    }
+};
+
+REMARK:
+1. To clarify: By saying "the same letter cell may not be used more than once", it means each letter may not be used more than once. So "ASFB" exist in the board, "ASFBB" does not.
+
+Idea is easy. After check the current letter, then move to the left/right/up/down 4 directions to continue checking the next letter. However, the implementation is pretty hard.
