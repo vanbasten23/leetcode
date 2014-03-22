@@ -1,0 +1,56 @@
+/*
+Restore IP Addresses 
+Given a string containing only digits, restore it by returning all possible valid IP address combinations.
+
+For example:
+Given "25525511135",
+
+return ["255.255.11.135", "255.255.111.35"]. (Order does not matter)
+*/
+class Solution {
+public:
+	//isValid is used to test if a string can be a valid IP address.
+    bool isValid(string s)
+    {
+        if (s.size()==3&&(atoi(s.c_str())>255||atoi(s.c_str())<1)) return false;
+        if (s.size()==3&&s[0]=='0') return false;
+        if (s.size()==2&&s[0]=='0') return false;
+        return true;
+    }
+    
+    //helper function, string r is one possible valid IP address. res is all possible valid IP address combinations. k is used in the recursion
+    void getRes(string s, string r, vector<string> &res, int k)
+    {
+        if (k==0)
+        {
+            if (s.size()==0) res.push_back(r);
+            return;
+        }
+        else
+        {
+            //for statement below means: a valid substring may be 1 digit, 2 digits, or 3 digits
+            for (int i=1; i<=3; ++i )
+            {
+                if (s.size()>=i&&isValid(s.substr(0,i)))
+                {
+                    //the if..else statement is used to check whether we need to add a "dot" in the address
+                    if (k==1) getRes(s.substr(i),r+s.substr(0,i),res,k-1);
+                    else getRes(s.substr(i),r+s.substr(0,i)+".",res,k-1);
+                }
+            }
+        }
+    }
+    
+    vector<string> restoreIpAddresses(string s){
+        vector<string> result;
+        result.clear();
+        getRes(s,"",result,4);
+        return result;
+    }
+};
+
+REMARK:
+1. How is an IP address valid? 
+Answer: 3 dots are needed to divide a string. Each substring should be a number in the range[0,255]. Also note  "0X" or "00X" are not valid. However,if the input is "0000", then we get only one output: 0.0.0.0   ,which means 0 is valid.
+2. So hard. Have no idea.
+3. IDEA: Actually not that hard. Still stereotype: main function calls helper function. In helper function, first write the base condition, then recursion in which we include a for loop to check all the cases and the isValid function. In recursion, use string.substr(0,i) or string.substr(i). In isValid function, use atoi(string.c_str()) to get its integer value.
