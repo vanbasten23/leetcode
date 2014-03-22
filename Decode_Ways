@@ -1,0 +1,77 @@
+/*
+Decode Ways
+A message containing letters from A-Z is being encoded to numbers using the following mapping:
+
+'A' -> 1
+'B' -> 2
+...
+'Z' -> 26
+Given an encoded message containing digits, determine the total number of ways to decode it.
+
+For example,
+Given encoded message "12", it could be decoded as "AB" (1 2) or "L" (12).
+
+The number of ways decoding "12" is 2.
+*/
+class Solution {
+public:
+    int numDecodings(string s) {
+      if (s.empty()) return 0;
+      vector<int> myvector(s.size()+1,0);
+      myvector[0]=1;
+      for (int i=0; i<s.size(); ++i)
+      {
+        if (s[i]>='1'&&s[i]<='9') myvector[i+1] += myvector[i];
+        if (i-1>=0)
+          if (s[i-1]=='1'||(s[i-1]=='2'&&s[i]>='0'&&s[i]<='6')) myvector[i+1] += myvector[i-1];
+      }
+      return myvector[s.size()];
+    }
+};
+
+REMARK:
+1. Seems easy but essential so hard. Spent hours. So tricky. 
+IDEA: Use a vector myvector to denote the number of ways to decode the substring, e.g. myvector[i+1] means the number of ways to decode s.substr(0,i), then the key is
+if s[i] is valid, myvector[i+1] += myvector[i]
+if (s[i-1],s[i]) is valid, myvector[i+1] += myvector[i-1].
+Note the two if statement above are not exclusive. First excute the first if statement, then execute the second.
+
+2. Cases to consider, ""(expected output:0),"01"(expected output:0),"100"(expected output:0).
+3.Note: you have to create a vector instead of an array. Why can't I create array? Don't know why.
+Also, the format to create a vector is
+vector<int> myvector(n,0) where n is the size of the vector and 0 is the initial value.
+
+4. Another version, less trickier, more straighforward. The idea is the same as the solution above but in a different implementation.
+class Solution {
+public:
+    bool valid(string s){
+        if (s.size()==0){return false;}
+        if (s[0]=='0'){return false;}
+        if (s.size()==2){
+            if (s[0]>'2' || (s[0]=='2'&& s[1]>'6')){return false;}
+        }
+        return true;
+    }
+     
+    int numDecodings(string s) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        if (s.empty()){return 0;}
+        vector<int> res(s.size(),0);
+        if (s[0]!='0'){res[0]=1;} // set res[0]
+        if (s.size()==1){return res[0];}
+        if (valid(s.substr(0,2))){res[1]++;} //set res[1]
+        if (s[0]!='0' && s[1]!='0'){res[1]++;} //set res[1]
+         
+        //DP
+        for (int i=2;i<s.size();i++){
+            if (s[i]!='0'){res[i]+=res[i-1];}
+            if (valid(s.substr(i-1,2))){
+                res[i]+=res[i-2];
+            }
+        }
+         
+        return res[s.size()-1];
+    }
+     
+};
