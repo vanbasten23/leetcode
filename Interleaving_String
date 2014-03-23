@@ -10,9 +10,64 @@ s2 = "dbbca",
 When s3 = "aadbbcbcac", return true.
 When s3 = "aadbbbaccc", return false.
 */
+
+//version2
 class Solution {
 public:
+	bool isInterleave(string s1, string s2, string s3) {
+      int n1=s1.size(), n2=s2.size(), n3=s3.size();
+      if (n3!=n1+n2) return false;
+  	  vector<vector<bool> > A(n1+1,vector<bool>(n2+1,false));
+  	  A[0][0]=true;
+  	  //initialization of A, the index of A starts from 1
+  	  for (int i=1; i<n1+1; ++i)
+  	  {
+  	    if (s1[i-1]==s3[i-1]&&A[i-1][0]) A[i][0] = true;
+  	  }    
+  	  for (int i=1; i<n2+1; ++i)
+  	  {
+  	    if (s2[i-1]==s3[i-1]&&A[0][i-1]) A[0][i] = true;
+  	  }
+
+  	  for (int i=1; i<n1+1; ++i)
+  		for (int j=1; j<n2+1; ++j)
+  		{
+  		  A[i][j]= (A[i-1][j]&&s1[i-1]==s3[i-1+j])||(A[i][j-1]&&s2[j-1]==s3[i+j-1]);
+  		}
+  	  return A[n1][n2];
+    }
+};
+
+REMARK:
+1. First I wrote the version1 using recursion. It's correct. However, it turned out to be so slow that cannot deal with large input. For the version2, I still don't understand the index of matrix A. 
+
+IDEA(version2):Since the version1(using recursion) is so slow, we need to think of dynamic programming(DP), which usually have much less complexity. In this problem, a 2D DP is more suitable. As usual,the typical way of solving DP is to find the state and the optimal function. Here, the state can be considered as A[i][j], which means s3.substr(i+j) can be formed by the interleaving of s1.substr(i)  and s2.substr(j). "(for simplicity here string starts from 1, in the code we need to deal with that string starts from 0)."
+Optimal function:
+  		  A[i][j]= (A[i-1][j]&&s1[i-1]==s3[i-1+j])||(A[i][j-1]&&s2[j-1]==s3[i+j-1]);
+
+
+2. Note how we define a 2 dimensional vector:
+vector<vector<bool> > A(n1+1,vector<bool>(n2+1,false));
+3
+//version1
+class Solution {
+public:
+	void helper(bool &flag,string s1,int pos1,string s2,int pos2,string s3,int pos3)
+	{
+	  if (pos3==s3.size()) {flag=true;return;}
+	  else
+	  {
+	    if (s3[pos3]==s1[pos1]) helper(flag,s1,pos1+1,s2,pos2,s3,pos3+1);
+	    if (s3[pos3]==s2[pos2]) helper(flag,s1,pos1,s2,pos2+1,s3,pos3+1);
+	    if (s3[pos3]!=s1[pos1]&&s3[pos3]==s2[pos2]) return;
+	  }
+	}
+
     bool isInterleave(string s1, string s2, string s3) {
-        
+      int n1=s1.size(), n2=s2.size(), n3=s3.size();
+      if (n3!=n1+n2) return false;
+      bool flag=false;
+      helper(flag,s1,0,s2,0,s3,0);
+ 	  return flag;
     }
 };
