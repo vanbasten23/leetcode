@@ -1,0 +1,47 @@
+/*
+Longest Common Prefix
+Write a function to find the longest common prefix string amongst an array of strings.
+*/
+class Solution {
+public:
+    string longestCommonPrefix(vector<string> &strs) {
+      if (strs.empty()) return "";
+      string commonstr=strs[0];
+      for (int i=1; i<strs.size(); ++i)
+      {
+      	int j;
+        for (j=0; j<strs[i].size()&&j<commonstr.size(); ++j)
+        {
+          if (strs[i][j]!= commonstr[j]) break;
+        }
+        commonstr = str.substr(0,j);
+      }
+      return commonstr;
+    }
+};
+
+REMARK:
+1. At first, Have no idea felt it was hard. However, I found that I did not understand this problem correctly. It should be easy. The problem wants the longest common prefix of all the strings in the array. So if we have {"abc","cde"} as input, then the output should be "".
+
+Then after grasping the meaning of the problem, you'll find this problem is among the easiest problems in leetcode. Idea: intialize the first string to be the final answer(i.e. commonstr in the code), then use a for loop(i) to go through all the string. Inside the for loop(i), use another for loop(j) to compare each charactor between commonstr and the next string in the array.
+
+2.Another slightly different and better solution is like below. Instead of for each string we check all the charactors, we do: for each charactor from the beginning, we check all the strings in the array.
+
+class Solution {
+public:
+    string longestCommonPrefix(vector<string> &strs) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        if (strs.empty()){return "";}
+        string str = strs[0];
+        int i;
+        for (i=0;i<str.size();i++){
+            bool fl=true;
+            for (int j=0;j<strs.size();j++){
+                if (strs[j][i]!=str[i]) {fl=false; break;}
+            }
+            if (fl==false){return str.substr(0,i);}
+        }
+        return str.substr(0,i);
+    }
+};
