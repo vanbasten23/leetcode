@@ -1,0 +1,67 @@
+/*
+Wildcard Matching 
+
+Implement wildcard pattern matching with support for '?' and '*'.
+
+'?' Matches any single character.
+'*' Matches any sequence of characters (including the empty sequence).
+
+The matching should cover the entire input string (not partial).
+
+The function prototype should be:
+bool isMatch(const char *s, const char *p)
+
+Some examples:
+isMatch("aa","a") → false
+isMatch("aa","aa") → true
+isMatch("aaa","aa") → false
+isMatch("aa", "*") → true
+isMatch("aa", "a*") → true
+isMatch("ab", "?*") → true
+isMatch("aab", "c*a*b") → false
+*/
+
+
+class Solution {
+public:
+    bool isMatch(const char *s, const char *p) {
+  	  const char *ss=s;
+  	  const char *posStar=NULL;//posStar records the position of the star
+
+  	  while(*s!=NULL)
+  	  {
+  	    if (*s==*p || *p=='?'){s++;p++;}
+  	    else if (*p=='*'){posStar=p;p++;ss=s;}
+  	    else if (posStar){p=posStar+1;s=++ss;}
+  	    else return false;
+  	  }
+  	  while(*p=='*') p++;
+  	  return !*p;
+    }
+};
+REMARK:
+1. Similar to the problem Regular_Expression_Matching but different.
+2. So damn hard. 
+IDEA:
+For each element in s
+(1)If *s==*p or *p == ? which means this is a match, then goes to next elements: s++ p++.
+(2)If p=='*', this is also a match, but one or many chars in s may be available, so let us save the position of '*' as variable posStar and the position of the corresponding char in s as variable ss. 
+
+Then we compare the next char after position posStar and the char at position ss.
+(case21)if they match, then goes to next elements: s++,p++.
+(case22)They do not match, then we check if there is a '*' previously showed up,
+  (case221):if there is no '*',  return false;
+  (case222):if there is a '*', we set current p to the next element of '*'(i.e. the next position of posStar), and set current s to the next saved s position.
+
+Example:
+e.g.
+
+abed
+?b*d**
+
+Step1:a=?, go on, b=b, go on,
+Step2:e=*, save * position star=3, save s position ss = 3, p++
+Step3:e!=d,  check if there was a *, yes, ss++, s=ss; p=star+1
+Step4:d=d, go on, meet the end.
+Step5:check the rest element in p, if all are *, true, else false;
+
