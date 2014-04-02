@@ -20,9 +20,61 @@ isMatch("ab", ".*") → true
 isMatch("aab", "c*a*b") → true
 */
 
+class Solution {
+public:
+	bool isMatch(const char *s, const char *p) {
+		// Start typing your C/C++ solution below
+		// DO NOT write int main() function    
+		if (*s==NULL && *p==NULL) return true;
+		else if (*p==NULL) return false;
+
+		if (*(p+1)!='*')
+		{
+		  if (*s==*p || (*p=='.' && *s!=NULL)) return isMatch(s+1,p+1);
+		  else return false;
+		}
+		else
+		{
+		  while (*s==*p || (*p=='.' && *s!=NULL))
+		  {
+		    if (isMatch(s,p+2)) return true;
+		    s++;
+		  }
+		  return isMatch(s,p+2);
+		}
+		return false;
+	}
+};
+
+
 
 REMARK:
-1. Similar to the problem Wildcard_Matching but different. The main different is how to understand the '*'. "*" means 0 or more preceding element. For example, the last test case in the problem description: 
+1. Similar to the problem Wildcard_Matching but different. The main difference is how to understand the '*'. "*" means 0 or more preceding element. For example, the last test case in the problem description: 
     isMatch("aab",""c*a*b")
 The pattern :  "c*a*b" means,  there can be 0 or more 'c', 0 or more 'a' and one b.
 e.g., "ccaab", "aab", "ccb", "b" are all valid strings for this pattern, thus the correct answer for this test case is also true (0 'c', 2 'a' and 1 'b').
+2.  So hard. Have no idea. Seems that '.' and '*' only occur in char *p.
+IDEA: (reference: http://blog.csdn.net/hopeztm/article/details/7992253)
+This is a dynamic programming problem.
+dp[i][j] =: true if s[i:len(s)-1] matches p[j:len(p)-1]
+			false if  s[i:len(s)-1] does NOT match p[j:len(p)-1]
+
+Then dp[i][j]=
+(case1: (p[j+1] != '*')):
+if(p[j] == s[i] || p[j] == '.' && s[i] != NULL) dp[i][j]=dp[i+1][j+1]
+else dp[i][j]=false
+(case2: (p[j+1] == '*')):in this case we deal with '*' and how many characters a '*' can stand. We do that by using a while statement and increasing i. If you don't understand how this works, i.e.(line38-42)
+while (*s==*p || (*p=='.' && *s!=NULL))
+{
+    if (isMatch(s,p+2)) return true;
+    s++;
+}
+simply walk through this example Input:	"aaa", "a*a" step by step. You'll see that.
+
+3. Difficulty:
+(1) Why do we need this line(line40):
+if(isMatch(s, p + 2))    return true;  
+Answer: Without these lines, we get the result:
+Input:	"aaa", "a*a"
+Output:	false
+Expected:	true
