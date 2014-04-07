@@ -1,0 +1,65 @@
+/*
+Distinct Subsequences
+Given a string S and a string T, count the number of distinct subsequences of T in S.
+
+A subsequence of a string is a new string which is formed from the original string by deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters. (ie, "ACE" is a subsequence of "ABCDE" while "AEC" is not).
+
+Here is an example:
+S = "rabbbit", T = "rabbit"
+
+Return 3.
+*/
+
+class Solution {
+public:
+    int numDistinct(string S, string T) {
+        vector<vector<int> > board(T.size()+1,vector<int> (S.size()+1,0));
+        //initialization
+        board[0][0]=1;
+        for (int i=1; i<S.size()+1; ++i)
+            board[0][i]=1;
+        for (int i=1; i<T.size()+1; ++i)
+            board[i][0]=0;
+        //dynamic programming
+        for (int i = 1; i <= T.length(); i++) {
+            for (int j = 1; j <= S.length(); j++) {
+                board[i][j] = board[i][j - 1];
+                if (T[i - 1] == S[j - 1]) {
+                    board[i][j] += board[i - 1][j - 1];
+                }  
+            }  
+        }  
+        return board[T.size()][S.size()];
+    }
+};
+
+REMARK:
+1.What the meaning of the problem?
+简单翻译一下，给定两个字符串S和T，求S有多少个不同的子串与T相同。
+In other word, this question ask how many time T has occurred in S, where some char can be added in between T, but the order of T cannot change.
+2.Hard one. Had no idea.
+IDEA: board[i][j] = the number of times T.sub(0,i) has occurred in S.sub(0,j)
+In the example, we have this matrix: 
+    r a b b b i t
+  1 1 1 1 1 1 1 1
+r 0 1 1 1 1 1 1 1
+a 0 0 1 1 1 1 1 1
+b 0 0 0 1 2 3 3 3
+b 0 0 0 0 1 3 3 3
+i 0 0 0 0 0 0 3 3
+t 0 0 0 0 0 0 0 3 
+
+From the chart, we see board[i][j] >= board[i][j-1].
+(case1: T[i-1]!=S[j-1]) then board[i][j] = board[i][j-1].
+(case2: T[i-1]==S[j-1]) then board[i][j] = board[i][j-1] + board[i-1][j-1].
+
+Thus:
+board[0][0]=1;//T="",S=""
+board[i=1:T.size()][0]=0;//S=""
+board[0][j=1:S.size()]=1;//T=""
+board[i][j] = board[i][j - 1] + (T[i - 1] == S[j - 1] ? board[i - 1][j - 1] : 0).1 <= i <= T.length(), 1 <= j <= S.length()
+3. Detail: 
+(a)vector<vector<int> > board(T.size()+1,vector<int> (S.size()+1,0)); this line create a matrix of size (T.size()+1) by (S.size()+1)
+(b) Note: here  if (T[i - 1] == S[j - 1]) {
+                  board[i][j] += board[i - 1][j - 1];}
+We cannot write if (T[i]==S[j]) because the indices of matrix board is different.
