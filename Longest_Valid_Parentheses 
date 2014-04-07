@@ -1,0 +1,81 @@
+/*
+Longest Valid Parentheses 
+Given a string containing just the characters '(' and ')', find the length of the longest valid (well-formed) parentheses substring.
+
+For "(()", the longest valid parentheses substring is "()", which has length = 2.
+
+Another example is ")()())", where the longest valid parentheses substring is "()()", which has length = 4.
+Date:Apr3,2014
+*/
+
+//version2
+class Solution {
+public:
+    int longestValidParentheses(string s) {
+      stack<int> mystack;//only store the indices of '('
+  	  int head=-1;//head is the starting position of a valid parentheses substring
+  	  int ans=0;//ans is the length of the longest valid parentheses substring   
+
+  	  for (int i=0; i<s.size(); ++i)
+  	  {
+  	    if (s[i]=='(') mystack.push(i);
+  	    //the case where (s[i]==')' && mystack is not empty)
+  	    else if (!mystack.empty())
+  	    {
+  	      mystack.pop();
+  	      if (mystack.empty()) ans = (i-head>ans)?(i-head):ans;
+  	      else ans=(i-mystack.top()>ans)?(i-mystack.top()):ans;
+  	    }
+  	    //the case where (s[i]==')' && mystack is empty)
+  	    else
+  	    {
+  	      head=i;
+  	    }
+  	  }   
+  	  return ans;
+    }
+};
+
+
+
+REMARK:
+1. First, has some idea but not clear. I wrote version1. version1 has minor errors and not efficient. Got version2 from Jinil.
+IDEA: Use a stack of type int to store the indices of '(', head denote the starting index of the valid parentheses substring.
+(case1) if the element is '(', we push it into the stack.
+(case2) if the element is ')':
+  (case2a)if the stack is not empty, it means we have a '(' in the stack to match the current ')'. We do pop() on the stack to check: 
+    (case2a1)if the stack is empty, then it means the previous found pairs should be added, then the length of valid parentheses substring= i - head.
+    (case2a2)if the stack is not empty, then the length of valid parentheses substring=(current index)-(top element index in the stack)
+  (cases2b)if the stack is empty, means we cannot find a '(' to match the current ')', we then update the variable head to the starting index of the next valid parentheses substring.
+
+2. Time: O(n) 
+3.
+//version1
+IDEA: Whenever we meet a  '(', we push it into the stack. Whenever we meet a ')', we check if there is a corresponding '(' before it: if there is, we add 2 to the length; otherwise we break. Note in this way, during the process, we will not see this case: ())) since whenever we see a ')', we pop it out and check. Does this method work?
+Answer: No. Consider this case: ()((). The length of "()(()" is 2. But using this solution, we get 4. Perhap, after we make some modification, it may work. However, it there is a if statement inside another if statement, which indicates O(n^2). We still have to discard this method and choose a linear method.
+class Solution {
+public:
+    int longestValidParentheses(string s) {
+      if (s.length()<=1) return 0;
+      int globLen=0;
+      for (int i=0; i<s.length(); ++i)
+      {
+        string ss = s.substr(i);
+   		int localLen=0;
+        stack<char> mystack;
+        mystack.clear();
+        for (int j=0; j<ss.length(); ++j)
+        {
+          if (ss[j]=='(') mystack.push(ss[j]);
+          else if (ss[j]==')')
+          {
+          	mystack.pop();
+          	if (!mystack.empty()) {mystack.pop(); localLen += 2;}
+            else break;
+          }
+        }
+        if (localLen>globLen) globLen = localLen;
+      }
+      return globLen;
+    }
+};
