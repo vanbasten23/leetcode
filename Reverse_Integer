@@ -24,7 +24,7 @@ public:
 REMARK:
 1. I first considered the problem in a more complicated way: first convert it to a string, then use for loop to reverse the string, then convert it back to an integer. Moreover, the function itoa which convert an integer to an array is not standard and not provided on my compiler.
 However, after I search the internet, the problem is supposed to be easy.
-2. Detail:  (-321)%10 = -1. 
+2. Detail:  (-321)%10 = -1. Therefore, we don't need to check whether the x is positive or negative.
 
 class Solution {
 public:
