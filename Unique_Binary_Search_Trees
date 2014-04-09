@@ -53,5 +53,7 @@ REMARK:
 1. Hard problem. Have no idea. 
 IDEA: Use recursion(similar to what we did in the problem: Same Tree or Maximum Depth of Binary Tree) or dynamic programming. 
 For recursion, just recursively count the number of left sub tree times number of right sub tree.
-For dynamic programming, define dp[n] as the number of unique BST that has n node.
-Then dp[n+1] = sum(dp[i]*dp[n-i-1])  i=0:(n-1)
+For dynamic programming, define dp[n] as the number of unique BST assuming that the BST has n node.
+Then dp[n+1] = sum(dp[i]*dp[n-i-1])  i=0:(n-1).
+dp[0]=0 //if the tree is empty, then dp[0] can be 0 or 1. But the recusion require dp[0] to be 1.
+dp[1]=1 //if the tree has only one node, then there is only one BST.
