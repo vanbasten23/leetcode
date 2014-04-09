@@ -1,0 +1,48 @@
+/*
+Reverse Integer
+
+Reverse digits of an integer.
+
+Example1: x = 123, return 321
+Example2: x = -123, return -321
+*/
+
+class Solution {
+public:
+    int reverse(int x) {
+      if (x==0) return 0; 
+       int res=0;
+        while (x!=0)
+        {
+          res = 10*res + (x%10);
+          x = int(x/10); 
+        }
+        return res;
+    }
+};
+
+REMARK:
+1. I first considered the problem in a more complicated way: first convert it to a string, then use for loop to reverse the string, then convert it back to an integer. Moreover, the function itoa which convert an integer to an array is not standard and not provided on my compiler.
+However, after I search the internet, the problem is supposed to be easy.
+2. Detail:  (-321)%10 = -1. 
+
+class Solution {
+public:
+    int reverse(int x) {
+      if (x==0) return 0;
+      else if (x>0)
+      {
+        char buffer[256];
+        itoa(x,buffer,10);
+        int n;
+        for (n=0; n<256; ++n)
+          if (buffer[n]=='\0') break;
+        for (int i=0; i<n/2; ++i)
+        {
+          int temp = buffer[i];
+          buffer[i]=buffer[n-i-1];
+        }
+        return atoi(buffer);
+      }
+    }
+};
