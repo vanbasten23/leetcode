@@ -1,0 +1,75 @@
+/*
+Binary Tree Preorder Traversal 
+
+Given a binary tree, return the preorder traversal of its nodes' values.
+
+For example:
+Given binary tree {1,#,2,3},
+   1
+    \
+     2
+    /
+   3
+return [1,2,3].
+
+Note: Recursive solution is trivial, could you do it iteratively?
+*/
+
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+ //recursive solution.
+class Solution {
+public:
+	void helper(TreeNode *root, vector<int> &res)
+	{
+	  if (!root) return;
+	  else res.push_back(root->val);
+	  helper(root->left,res);
+	  helper(root->right,res);
+	}
+
+    vector<int> preorderTraversal(TreeNode *root) {
+      vector<int> res;
+      helper(root,res);
+      return res;
+    }
+};
+
+//iterative solution
+class Solution {
+public:
+	vector<int> preorderTraversal(TreeNode *root) {
+      stack<TreeNode *> mystack;
+      vector<int> res;
+      if (!root) return res;
+      else mystack.push(root);
+      while (!mystack.empty())
+      {
+        TreeNode* temp=mystack.top();
+        mystack.pop();
+        res.push_back(temp->val);
+        if (temp->right) mystack.push(temp->right);
+        if (temp->left) mystack.push(temp->left);
+      }
+      return res;
+    }
+};
+
+REMARK:
+1. The recursive method is pretty straightforward. However, the iterative method is hard.
+(Refer to yu's coding)
+Non-Recursive traversal is to ulitize the data structure stack. There are three steps for this algorithm:
+(1) Initialize the stack. Push the root node into stack.
+(2) While the stack is not empty do:
+        (a) Pop the top node from the stack.
+        (b) Store the top node
+        (c) Push the top node's right child into stack
+        (d) Push the top node's left child into stack
+(3) Output the stored sequence.
