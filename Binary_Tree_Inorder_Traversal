@@ -1,0 +1,65 @@
+/*
+Binary Tree Inorder Traversal 
+
+Given a binary tree, return the inorder traversal of its nodes' values.
+
+Note: Recursive solution is trivial, could you do it iteratively?
+*/
+
+//recursive solution is trivial
+
+//iterative method
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode *root) {
+      vector<int> res;
+      if (!root) return res;
+      stack<TreeNode *> st;
+      TreeNode *current=root;
+      while (true)
+      {
+      	if (current)
+      	{
+      	  st.push(current);
+      	  current=current->left;
+      	}
+      	else
+      	{
+      	  if (st.empty()) break;
+      	  else
+      	  {
+      	    res.push_back((st.top())->val);
+      	    current=(st.top())->right;
+      	    st.pop();
+      	  }
+      	}
+      }
+      return res;
+    }
+};
+
+REMARK:
+1. The recursive solution is straightforward. However, the iterative solution is hard.
+
+Non-Recursive traversal is to ulitize the data structure stack. There are three steps for this algorithm:
+(1) Initialize the stack. Set root as the current node. Push the current node into stack.
+(2) Loop until finished (while true):
+        (a) If current is NOT NULL:
+                (i)Push the current node into stack.
+                (ii)Current node = current node's left child 
+        (b) If current is NULL:
+                (i)If stack is empty: exit
+                (ii)If stack is NOT empty:
+                      Store the top node for output.
+                      Set current node = top node's right child.    
+                      Pop the top node in the stack.          
+(3) Output the stored sequence.
