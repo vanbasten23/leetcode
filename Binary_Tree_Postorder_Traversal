@@ -1,0 +1,80 @@
+/*
+Binary Tree Postorder Traversal 
+
+Given a binary tree, return the postorder traversal of its nodes' values.
+
+For example:
+Given binary tree {1,#,2,3},
+   1
+    \
+     2
+    /
+   3
+return [3,2,1].
+
+Note: Recursive solution is trivial, could you do it iteratively?
+*/
+
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+ //recursive solution
+class Solution {
+public:
+    void helper(vector<int> &res, TreeNode *root)
+    {
+      if (root->left) helper(res,root->left);//Note, you must check if root->left is not empty before you do recursion: helper(res,root->left)
+      if (root->right) helper(res,root->right);
+      if (!root) return;
+      else res.push_back(root->val);
+    }
+
+    vector<int> postorderTraversal(TreeNode *root) {
+      vector<int> res;
+      if (!root) return res;
+      helper(res,root);
+      return res;
+    }
+};
+
+ //iterative solution
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode *root) {
+      vector<int> res;
+      if (!root) return res;
+      stack<TreeNode *> st1, st2;
+      st1.push(root);
+      while(!st1.empty())
+      {
+      	TreeNode *temp = st1.top();
+      	st1.pop();
+      	st2.push(temp);
+        if (temp->left) st1.push(temp->left);
+        if (temp->right) st1.push(temp->right);
+      }
+      while(!st2.empty())
+      {
+        res.push_back((st2.top())->val);
+        st2.pop();
+      }
+      return res;
+    }
+};
+
+REMARK:
+1. Recursive solution is straightforward. However, iterative solution is hard.
+Non-Recursive traversal is to ulitize the data structure stack. Two stacks is used in this algorithm. Stack 2 is used to store the result. There are three steps:
+(1) Initialize the stack. Push the root node into stack.
+(2) While the stack is not empty do:
+        (a) Pop the top node from the stack 1.
+        (b) Push the top node into stack 2.
+        (c) Push the top node's left child into stack 1.
+        (d) Push the top node's right child into stack 1.
+(3) Pop all the nodes in Stack 2 to get the result.
